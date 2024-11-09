@@ -1,0 +1,93 @@
+﻿@page "/mapa"
+@inject IJSRuntime JS
+@using System.Text.Json
+
+<h3>Mapa de Detenciones</h3>
+
+<div id="map" style="height: 500px;"></div>
+
+<!-- Modal para mostrar los detalles de la detención -->
+@if (mostrarModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalles de la Detención</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Nombre:</strong> @detencionSeleccionada.NombreApellido</p>
+                    <p><strong>Número de Pasaporte:</strong> @detencionSeleccionada.NumeroPasaporte</p>
+                    <p><strong>Fecha de Detención:</strong> @detencionSeleccionada.FechaDetencion.ToShortDateString()</p>
+                    <p><strong>Coordenadas:</strong> @detencionSeleccionada.Coordenadas.Latitud, @detencionSeleccionada.Coordenadas.Longitud</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private bool mostrarModal = false;
+    private Detencion detencionSeleccionada = new Detencion();
+
+    // Lista de detenciones para mostrar en el mapa
+    private List<Detencion> detenciones = new List<Detencion>
+    {
+        new Detencion
+        {
+            NombreApellido = "Juan Pérez",
+            NumeroPasaporte = "A123456",
+            FechaDetencion = DateTime.Now,
+            Coordenadas = new Coordenadas { Latitud = 18.7357, Longitud = -70.1627 }
+        },
+        new Detencion
+        {
+            NombreApellido = "Ana González",
+            NumeroPasaporte = "B654321",
+            FechaDetencion = DateTime.Now.AddDays(-1),
+            Coordenadas = new Coordenadas { Latitud = 18.5099, Longitud = -69.9292 }
+        }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Inicializa el mapa con los marcadores
+            await JS.InvokeVoidAsync("initMap", JsonSerializer.Serialize(detenciones));
+        }
+    }
+
+    [JSInvokable]
+    public void MostrarDetallesDetencion(Detencion detencion)
+    {
+        detencionSeleccionada = detencion;
+        mostrarModal = true;
+        StateHasChanged();
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+    }
+
+    // Clases para representar detenciones y coordenadas
+    public class Detencion
+    {
+        public string NombreApellido { get; set; }
+        public string NumeroPasaporte { get; set; }
+        public DateTime FechaDetencion { get; set; }
+        public Coordenadas Coordenadas { get; set; }
+    }
+
+    public class Coordenadas
+    {
+        public double Latitud { get; set; }
+        public double Longitud { get; set; }
+    }
+}

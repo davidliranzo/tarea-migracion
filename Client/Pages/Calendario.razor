@@ -1,0 +1,163 @@
+﻿@page "/calendario"
+@inject IJSRuntime JS
+@using System.Globalization
+
+<h3>Calendario de Detenciones</h3>
+
+<!-- Selección de mes y año -->
+<div>
+    <label>Mes:</label>
+    <select @bind="mesSeleccionado">
+        @for (int mes = 1; mes <= 12; mes++)
+        {
+            <option value="@mes">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(mes)</option>
+        }
+    </select>
+    <label>Año:</label>
+    <input type="number" @bind="añoSeleccionado" min="2000" max="2100" />
+</div>
+
+<!-- Tabla del calendario -->
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            @foreach (var diaSemana in CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames)
+            {
+                <th>@diaSemana</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var semana in diasDelMes.Chunk(7))
+        {
+            <tr>
+                @foreach (var dia in semana)
+                {
+                    <td @onclick="() => MostrarModal(dia.Fecha)" class="calendario-dia">
+                        @if (dia.Fecha.Month == mesSeleccionado)
+                        {
+                            <div>@dia.Fecha.Day</div>
+                            @if (dia.Detenciones > 0)
+                            {
+                                <span class="badge bg-primary">@dia.Detenciones</span>
+                            }
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal para mostrar la lista de detenidos en un día -->
+@if (mostrarModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Personas Detenidas el @fechaSeleccionada.ToShortDateString()</h5>
+                    <button type="button" class="btn-close" @onclick="CerrarModal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        @foreach (var persona in personasDetenidas)
+                        {
+                            <li>@persona.NombreApellido - @persona.NumeroPasaporte</li>
+                        }
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CerrarModal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private int mesSeleccionado = DateTime.Now.Month;
+    private int añoSeleccionado = DateTime.Now.Year;
+    private List<Dia> diasDelMes = new List<Dia>();
+    private DateTime fechaSeleccionada;
+    private bool mostrarModal = false;
+    private List<Persona> personasDetenidas = new List<Persona>();
+
+    protected override void OnInitialized()
+    {
+        CargarDias();
+    }
+
+    protected override void OnParametersSet()
+    {
+        CargarDias();
+    }
+
+    private void CargarDias()
+    {
+        diasDelMes.Clear();
+        var primerDia = new DateTime(añoSeleccionado, mesSeleccionado, 1);
+        var diaInicioSemana = (int)primerDia.DayOfWeek;
+
+        // Crear espacio en blanco para los primeros días
+        for (int i = 0; i < diaInicioSemana; i++)
+        {
+            diasDelMes.Add(new Dia { Fecha = primerDia.AddDays(-1 - i) });
+        }
+
+        // Agregar días del mes
+        for (int dia = 1; dia <= DateTime.DaysInMonth(añoSeleccionado, mesSeleccionado); dia++)
+        {
+            var fecha = new DateTime(añoSeleccionado, mesSeleccionado, dia);
+            diasDelMes.Add(new Dia
+                {
+                    Fecha = fecha,
+                    Detenciones = ObtenerNumeroDeDetenciones(fecha)
+                });
+        }
+    }
+
+    private int ObtenerNumeroDeDetenciones(DateTime fecha)
+    {
+        // Aquí puedes integrar la lógica para contar las detenciones en esa fecha
+        return ObtenerDetenidosPorFecha(fecha).Count;
+    }
+
+    private List<Persona> ObtenerDetenidosPorFecha(DateTime fecha)
+    {
+        // Ejemplo: retorna una lista de personas detenidas en esa fecha
+        var personasEjemplo = new List<Persona>
+        {
+            new Persona { NombreApellido = "Juan Pérez", NumeroPasaporte = "A123456" },
+            new Persona { NombreApellido = "Ana González", NumeroPasaporte = "B654321" }
+        };
+
+        return fecha.Day % 2 == 0 ? personasEjemplo : new List<Persona>(); // Simulación de datos
+    }
+
+    private void MostrarModal(DateTime fecha)
+    {
+        fechaSeleccionada = fecha;
+        personasDetenidas = ObtenerDetenidosPorFecha(fecha);
+        mostrarModal = personasDetenidas.Any();
+    }
+
+    private void CerrarModal()
+    {
+        mostrarModal = false;
+    }
+
+    // Clases internas para el día y persona
+    public class Dia
+    {
+        public DateTime Fecha { get; set; }
+        public int Detenciones { get; set; }
+    }
+
+    public class Persona
+    {
+        public string NombreApellido { get; set; }
+        public string NumeroPasaporte { get; set; }
+    }
+}

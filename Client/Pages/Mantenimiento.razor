@@ -1,0 +1,72 @@
+﻿@page "/mantenimiento"
+@using System.Collections.Generic
+
+<h3>Mantenimiento de Personas Detenidas</h3>
+
+<!-- Formulario para agregar personas -->
+<EditForm Model="nuevaPersona" OnValidSubmit="AgregarPersona">
+    <DataAnnotationsValidator />
+    <div>
+        <label>Fecha de Detención</label>
+        <InputDate @bind-Value="nuevaPersona.FechaDetencion" />
+    </div>
+    <div>
+        <label>Nombre y Apellido</label>
+        <InputText @bind-Value="nuevaPersona.NombreApellido" />
+    </div>
+    <div>
+        <label>Número de Pasaporte</label>
+        <InputText @bind-Value="nuevaPersona.NumeroPasaporte" />
+    </div>
+    <div>
+        <label>Fecha de Nacimiento</label>
+        <InputDate @bind-Value="nuevaPersona.FechaNacimiento" />
+    </div>
+    <div>
+        <label>Coordenadas de la Detención</label>
+        <InputText @bind-Value="nuevaPersona.Coordenadas" />
+    </div>
+    <button type="submit">Agregar</button>
+</EditForm>
+
+<!-- Lista de personas detenidas -->
+<ul>
+    @foreach (var persona in personas)
+    {
+        <li>
+            @persona.NombreApellido - @persona.NumeroPasaporte - @persona.FechaDetencion
+            <button @onclick="() => EditarPersona(persona)">Editar</button>
+            <button @onclick="() => EliminarPersona(persona)">Eliminar</button>
+        </li>
+    }
+</ul>
+
+@code {
+    private List<Persona> personas = new List<Persona>();
+    private Persona nuevaPersona = new Persona();
+
+    private void AgregarPersona()
+    {
+        personas.Add(nuevaPersona);
+        nuevaPersona = new Persona();
+    }
+
+    private void EditarPersona(Persona persona)
+    {
+        // Lógica para editar la persona
+    }
+
+    private void EliminarPersona(Persona persona)
+    {
+        personas.Remove(persona);
+    }
+
+    public class Persona
+    {
+        public DateTime FechaDetencion { get; set; }
+        public string NombreApellido { get; set; }
+        public string NumeroPasaporte { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+        public string Coordenadas { get; set; }
+    }
+}

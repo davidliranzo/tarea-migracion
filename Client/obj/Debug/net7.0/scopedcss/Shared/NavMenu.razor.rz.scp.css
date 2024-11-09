@@ -1,0 +1,119 @@
+.navbar-toggler[b-aw7s1uks9t] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-row[b-aw7s1uks9t] {
+    height: 3.5rem;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.navbar-brand[b-aw7s1uks9t] {
+    font-size: 1.1rem;
+}
+
+.oi[b-aw7s1uks9t] {
+    width: 2rem;
+    font-size: 1.1rem;
+    vertical-align: text-top;
+    top: -2px;
+}
+
+.nav-item[b-aw7s1uks9t] {
+    font-size: 0.9rem;
+    padding-bottom: 0.5rem;
+}
+
+    .nav-item:first-of-type[b-aw7s1uks9t] {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type[b-aw7s1uks9t] {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item[b-aw7s1uks9t]  a {
+        color: #d7d7d7;
+        border-radius: 4px;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+    }
+
+.nav-item[b-aw7s1uks9t]  a.active {
+    background-color: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.nav-item[b-aw7s1uks9t]  a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+@media (min-width: 641px) {
+    .navbar-toggler[b-aw7s1uks9t] {
+        display: none;
+    }
+
+    .collapse[b-aw7s1uks9t] {
+        /* Never collapse the sidebar for wide screens */
+        display: block;
+    }
+    
+    .nav-scrollable[b-aw7s1uks9t] {
+        /* Allow sidebar to scroll for tall menus */
+        height: calc(100vh - 3.5rem);
+        overflow-y: auto;
+    }
+}
+
+.top-bar[b-aw7s1uks9t] {
+    background-color: #2c3e50;
+    padding: 10px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar[b-aw7s1uks9t] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-list[b-aw7s1uks9t] {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+    .nav-list li[b-aw7s1uks9t] {
+        display: inline;
+    }
+
+    .nav-list a[b-aw7s1uks9t] {
+        text-decoration: none;
+        color: #ecf0f1;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+        .nav-list a:hover[b-aw7s1uks9t] {
+            background-color: #34495e;
+        }
+
+    .nav-list .icon[b-aw7s1uks9t] {
+        font-size: 20px;
+    }
+
+/* Estilos del contenido principal */
+.main-content[b-aw7s1uks9t] {
+    padding: 20px;
+    background-color: #f4f6f9;
+}
